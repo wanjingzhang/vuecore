@@ -121,6 +121,7 @@ function createGetter(isReadonly = false, shallow = false) {
     }
 
     if (!isReadonly) {
+      console.log("加点 料~")
       track(target, TrackOpTypes.GET, key)
     }
 
