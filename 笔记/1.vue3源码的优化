@@ -1,0 +1,32 @@
+2020.9.18 Vue3.0 正式发布 One Piece
+
+一、源码优化
+1. 使用monorepo 和 TS开发和管理源码
+  monorepo将不同的功能拆分到不同的包package中，每个包有自己的API、类型定义、测试。
+  粒度更细、职责明确、依赖关系明显
+  TypeScript 开发语言有利于代码维护，在编码期间做类型检查，利于定义接口类型，省去了写d.ts文件的麻烦。
+  Vue2 使用Flow，在复杂场景下的类型检查Flow支持的不够。
+
+二、性能优化
+1. 代码体积：
+    * 移除冷门的功能（filter、inline-template）。
+    * 引入tree-shaking，在编译阶段静态分析，找到未被导入的模块并打上标记，最后再压缩阶段删除已标记的代码
+2. 数据劫持：
+    * vue2 Object.defineProperty(data,'a',{get(){},set(){})
+      不能检测对象属性的添加和删除，所以提供了$set\$delete实例函数。
+      对于嵌套层级深的对象，递归遍历会消耗相当打的性能负担
+    * vue3 new Proxy(data,{get(){//track},set(){//trigger}})
+      在Proxy的getter中递归响应，只在访问内部对象才会响应，而不是无脑递归，无疑提升了性能
+3. 编译patch阶段：
+    * vue2 数据更新重新渲染的粒度为组件级。但为了保证更新组件的最小化，在单个组件内部依然需要diff遍历该组件整个vnode树。而不是只更新的节点
+    * vue3 编辑阶段对静态模板分析，编译Block Tree：将模板基于动态节点指令 切割嵌套区块。每个区块的节点结构是固定的，且每个区块只需要一个Array来追踪自身包含的动态节点
+      用Block Tree把vnode的更新性能，从 模板整体大小相关 提升为 与动态内容的数量相关，是一个非常大的性能突破。
+
+三、语法API优化
+1. 优化逻辑组织： 
+    Options API => Composition API，关注点集中
+2. 优化逻辑复用
+    Mixin => hooks
+
+四、引入RFC
+    * Request For Comments 了解每个功能的来源。Github的vueje/rfc项目页面。审视工作、发现痛点。找到可以改进和努力的地方、并付诸实践
