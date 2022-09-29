@@ -48,21 +48,26 @@ async function run() {
     checkAllSizes(fuzzyMatchTarget(targets, buildAllMatching))
   }
 }
-
+// buildAll 传入的参数为收集目标获取的targets 列表
 async function buildAll(targets) {
   await runParallel(require('os').cpus().length, targets, build)
 }
-
+// 实现并行编译
 async function runParallel(maxConcurrency, source, iteratorFn) {
   const ret = []
+  // executing数组记录当前正在执行的异步任务
   const executing = []
+  // 遍历source，执行每个包的单独编译
   for (const item of source) {
+    // iteratorFn 传入单个编译函数
     const p = Promise.resolve().then(() => iteratorFn(item, source))
     ret.push(p)
 
     if (maxConcurrency <= source.length) {
+      // 当某个任务执行完成，就会被移除，这样就能继续执行后续异步任务了
       const e = p.then(() => executing.splice(executing.indexOf(e), 1))
       executing.push(e)
+      // 如果异步执行任务长度大于最大并发数，则停止执行后续任务
       if (executing.length >= maxConcurrency) {
         await Promise.race(executing)
       }
@@ -70,12 +75,13 @@ async function runParallel(maxConcurrency, source, iteratorFn) {
   }
   return Promise.all(ret)
 }
-
+// 单个编译
 async function build(target) {
   const pkgDir = path.resolve(`packages/${target}`)
   const pkg = require(`${pkgDir}/package.json`)
 
   // if this is a full build (no specific targets), ignore private packages
+  // 只编译公共包
   if ((isRelease || !targets.length) && pkg.private) {
     return
   }
@@ -88,6 +94,7 @@ async function build(target) {
   const env =
     (pkg.buildOptions && pkg.buildOptions.env) ||
     (devOnly ? 'development' : 'production')
+  // 执行rollup命令，运行rollup打包工具
   await execa(
     'rollup',
     [

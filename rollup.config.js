@@ -9,6 +9,8 @@ if (!process.env.TARGET) {
 }
 
 const masterVersion = require('./package.json').version
+// packages/vue
+// 执行resolve后，对应的input就是 packages/vue/src/runtime.ts
 const packagesDir = path.resolve(__dirname, 'packages')
 const packageDir = path.resolve(packagesDir, process.env.TARGET)
 const resolve = p => path.resolve(packageDir, p)
@@ -18,7 +20,8 @@ const name = packageOptions.filename || path.basename(packageDir)
 
 // ensure TS checks only once for each build
 let hasTSChecked = false
-
+// 输出配置
+// fromat：es, cjs, iife
 const outputConfigs = {
   'esm-bundler': {
     file: resolve(`dist/${name}.esm-bundler.js`),
@@ -53,7 +56,9 @@ const outputConfigs = {
 
 const defaultFormats = ['esm-bundler', 'cjs']
 const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(',')
+// packageOptions 对应的就是每个包package.json中定义的buildOptions
 const packageFormats = inlineFormats || packageOptions.formats || defaultFormats
+// 拿到一个formats，执行createConfig传入format，构造编译配置对象
 const packageConfigs = process.env.PROD_ONLY
   ? []
   : packageFormats.map(format => createConfig(format, outputConfigs[format]))
@@ -73,7 +78,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 export default packageConfigs
-
+// 创建编译对象
 function createConfig(format, output, plugins = []) {
   if (!output) {
     console.log(require('chalk').yellow(`invalid format: "${format}"`))
@@ -119,7 +124,7 @@ function createConfig(format, output, plugins = []) {
   // it also seems to run into weird issues when checking multiple times
   // during a single build.
   hasTSChecked = true
-
+  // 1. 输入文件只有2种：runtime.ts & index.ts
   let entryFile = /runtime$/.test(format) ? `src/runtime.ts` : `src/index.ts`
 
   // the compat build needs both default AND named exports. This will cause
@@ -130,7 +135,7 @@ function createConfig(format, output, plugins = []) {
       ? `src/esm-runtime.ts`
       : `src/esm-index.ts`
   }
-
+  // 作为rollup的一个对象的属性，表示在打包过程中需要排除的第三方库
   let external = []
 
   if (isGlobalBuild || isBrowserESMBuild || isCompatPackage) {
@@ -186,6 +191,7 @@ function createConfig(format, output, plugins = []) {
       : []
 
   return {
+    // 输入和输出
     input: resolve(entryFile),
     // Global and Browser ESM builds inlines everything so that they can be
     // used alone.
