@@ -1,3 +1,4 @@
+// 创建vnode的地方，哈哈
 import {
   isArray,
   isFunction,
@@ -400,7 +401,8 @@ const normalizeRef = ({
       : null
   ) as any
 }
-
+// 创建基础vnode节点，可以完整的描述节点的信息
+//  needFullChildrenNormalization 去除标准化节点
 function createBaseVNode(
   type: VNodeTypes | ClassComponent | typeof NULL_DYNAMIC_COMPONENT,
   props: (Data & VNodeProps) | null = null,
@@ -491,6 +493,8 @@ export const createVNode = (
   __DEV__ ? createVNodeWithArgsTransform : _createVNode
 ) as typeof _createVNode
 
+// 创建vnode节点，Block Tree 处理逻辑
+// createVNode 有很多判断逻辑
 function _createVNode(
   type: VNodeTypes | ClassComponent | typeof NULL_DYNAMIC_COMPONENT,
   props: (Data & VNodeProps) | null = null,
@@ -499,13 +503,14 @@ function _createVNode(
   dynamicProps: string[] | null = null,
   isBlockNode = false
 ): VNode {
+  // 1. 判断type是否为空
   if (!type || type === NULL_DYNAMIC_COMPONENT) {
     if (__DEV__ && !type) {
       warn(`Invalid vnode type when creating vnode: ${type}.`)
     }
     type = Comment
   }
-
+  // 2. 判断type是否为vnode节点
   if (isVNode(type)) {
     // createVNode receiving an existing vnode. This happens in cases like
     // <component :is="vnode"/>
@@ -525,7 +530,7 @@ function _createVNode(
     return cloned
   }
 
-  // class component normalization.
+  // 3. 判断type是不是一个class类型的组件 class component normalization.
   if (isClassComponent(type)) {
     type = type.__vccOpts
   }
@@ -535,7 +540,7 @@ function _createVNode(
     type = convertLegacyComponent(type, currentRenderingInstance)
   }
 
-  // class & style normalization.
+  // 4. class & style 标准化 normalization.
   if (props) {
     // for reactive or proxy objects, we need to clone it to enable mutation.
     props = guardReactiveProps(props)!
@@ -554,6 +559,7 @@ function _createVNode(
   }
 
   // encode the vnode type information into a bitmap
+  // 5. 对vnode类型的信息做了编码
   const shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT
     : __FEATURE_SUSPENSE__ && isSuspense(type)

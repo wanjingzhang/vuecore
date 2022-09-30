@@ -1186,7 +1186,7 @@ function baseCreateRenderer(
       updateComponent(n1, n2, optimized)
     }
   }
-
+  // 1. 组件的挂载函数
   const mountComponent: MountComponentFn = (
     initialVNode,
     container,
@@ -1296,7 +1296,7 @@ function baseCreateRenderer(
       instance.vnode = n2
     }
   }
-
+  // 设置副作用的渲染函数
   const setupRenderEffect: SetupRenderEffectFn = (
     instance,
     initialVNode,
@@ -1306,6 +1306,7 @@ function baseCreateRenderer(
     isSVG,
     optimized
   ) => {
+    // 组件的渲染和更新函数
     const componentUpdateFn = () => {
       if (!instance.isMounted) {
         let vnodeHook: VNodeHook | null | undefined
@@ -1373,6 +1374,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `render`)
           }
+          // 渲染组件生成子树vnode
           const subTree = (instance.subTree = renderComponentRoot(instance))
           if (__DEV__) {
             endMeasure(instance, `render`)
@@ -1380,6 +1382,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             startMeasure(instance, `patch`)
           }
+          // 把子树挂载到container中
           patch(
             null,
             subTree,
@@ -1392,6 +1395,7 @@ function baseCreateRenderer(
           if (__DEV__) {
             endMeasure(instance, `patch`)
           }
+          // 保存渲染生成的子树根DOM节点
           initialVNode.el = subTree.el
         }
         // mounted hook
@@ -1448,7 +1452,7 @@ function baseCreateRenderer(
         // #2458: deference mount-only object parameters to prevent memleaks
         initialVNode = container = anchor = null as any
       } else {
-        // updateComponent
+        // updateComponent 更新组件
         // This is triggered by mutation of component's own state (next: null)
         // OR parent calling processComponent (next: VNode)
         let { next, bu, u, parent, vnode } = instance
@@ -1550,6 +1554,7 @@ function baseCreateRenderer(
     }
 
     // create reactive effect for rendering
+    // 创建组件渲染的副作用响应式对象
     const effect = (instance.effect = new ReactiveEffect(
       componentUpdateFn,
       () => queueJob(update),
@@ -1559,6 +1564,7 @@ function baseCreateRenderer(
     const update: SchedulerJob = (instance.update = () => effect.run())
     update.id = instance.uid
     // allowRecurse
+    // 允许递归更新自己
     // #1801, #2043 component render effects should allow recursive updates
     toggleRecurse(instance, true)
 
