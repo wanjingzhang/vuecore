@@ -272,6 +272,7 @@ function createReplacePlugin(
 
     // feature flags
     __FEATURE_SUSPENSE__: true,
+    // rollup 预定义常量插件，如果构建的资源是供打包工具使用
     __FEATURE_OPTIONS_API__: isBundlerESMBuild ? `__VUE_OPTIONS_API__` : true,
     __FEATURE_PROD_DEVTOOLS__: isBundlerESMBuild
       ? `__VUE_PROD_DEVTOOLS__`

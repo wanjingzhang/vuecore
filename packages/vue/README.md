@@ -41,6 +41,7 @@ Starting with 3.0.0-rc.3, `esm-bundler` builds now exposes global feature flags 
 The build will work without configuring these flags, however it is **strongly recommended** to properly configure them in order to get proper tree-shaking in the final bundle. To configure these flags:
 
 - webpack: use [DefinePlugin](https://webpack.js.org/plugins/define-plugin/)
+- 使用 webpack.DefinePlugin 插件定义是否要开启选项式api。在打包时，关闭选项式API会删除其功能包。
 - Rollup: use [@rollup/plugin-replace](https://github.com/rollup/plugins/tree/master/packages/replace)
 - Vite: configured by default, but can be overwritten using the [`define` option](https://github.com/vitejs/vite/blob/a4133c073e640b17276b2de6e91a6857bdf382e1/src/node/config.ts#L72-L76)
 
