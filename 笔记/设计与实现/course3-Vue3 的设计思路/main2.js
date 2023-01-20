@@ -1,3 +1,8 @@
+/**
+ * 递归调用 renderer 渲染 subtree
+ * @param {虚拟DOM} vnode
+ * @param {容器} container
+ */
 function renderer(vnode, container) {
   if (typeof vnode.tag === 'string') {
     // 说明 vnode 描述的是标签元素
@@ -8,6 +13,11 @@ function renderer(vnode, container) {
   }
 }
 
+/**
+ * 渲染元素
+ * @param {虚拟DOM} vnode
+ * @param {容器} container
+ */
 function mountElement(vnode, container) {
   // 使用 vnode.tag 作为标签名称创建 DOM 元素
   const el = document.createElement(vnode.tag)
@@ -35,6 +45,11 @@ function mountElement(vnode, container) {
   container.appendChild(el)
 }
 
+/**
+ * 渲染组件
+ * @param {虚拟DOM} vnode
+ * @param {容器} container
+ */
 function mountComponent(vnode, container) {
   // 调用组件函数，获取组件要渲染的内容（虚拟 DOM）
   const subtree = vnode.tag()

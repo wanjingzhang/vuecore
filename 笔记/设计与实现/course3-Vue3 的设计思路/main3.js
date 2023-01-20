@@ -1,3 +1,8 @@
+/**
+ * 渲染函数
+ * @param {虚拟DOM} vnode
+ * @param {容器} container
+ */
 function renderer(vnode, container) {
   if (typeof vnode.tag === 'string') {
     // 说明 vnode 描述的是标签元素
@@ -37,11 +42,13 @@ function mountElement(vnode, container) {
 
 function mountComponent(vnode, container) {
   // 调用组件函数，获取组件要渲染的内容（虚拟 DOM）
+  // 调用组件的render方法，返回一个虚拟DOM
   const subtree = vnode.tag.render()
   // 递归调用 renderer 渲染 subtree
   renderer(subtree, container)
 }
 
+// ❗❗❗❗❗ 我们使用一个对象代表组件，该对象有一个render函数，返回值代表render要渲染的内容
 const MyComponent = {
   render() {
     return {
@@ -53,7 +60,7 @@ const MyComponent = {
     }
   }
 }
-
+// 虚拟DOM
 const vnode = {
   tag: MyComponent
 }
