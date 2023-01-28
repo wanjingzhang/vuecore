@@ -1,7 +1,3 @@
-<body></body>
-<script>
-
-
 // 存储副作用函数的桶
 const bucket = new Set()
 
@@ -29,5 +25,3 @@ function effect() {
   document.body.innerText = obj.text
 }
 effect()
-
-</script>
