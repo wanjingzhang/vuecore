@@ -1,7 +1,3 @@
-<body></body>
-<script>
-
-
 // 存储副作用函数的桶
 const bucket = new WeakMap()
 
@@ -83,5 +79,3 @@ setTimeout(() => {
     obj.text = 'hello vue3'
   }, 1000)
 }, 1000)
-
-</script>

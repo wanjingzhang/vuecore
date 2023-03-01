@@ -1,5 +1,3 @@
-<body></body>
-<script>
 const obj1 = {}
 const obj2 = {}
 
@@ -13,4 +11,3 @@ obj1 = null
 obj2 = null
 
 map1.get()
-</script>

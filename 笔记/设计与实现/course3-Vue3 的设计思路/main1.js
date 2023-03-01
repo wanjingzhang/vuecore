@@ -34,10 +34,16 @@ function renderer(vnode, container) {
 // 虚拟dom
 const vnode = {
   tag: 'div',
-  props: {
-    onClick: () => alert('hello')
-  },
-  children: 'click me'
+  children: [
+    {
+      tag: 'div',
+      children: 'click me',
+      props: {
+        onClick: () => alert('hello')
+      }
+    },
+    { tag: 'div', children: 'touch me' }
+  ]
 }
 
 renderer(vnode, document.body)

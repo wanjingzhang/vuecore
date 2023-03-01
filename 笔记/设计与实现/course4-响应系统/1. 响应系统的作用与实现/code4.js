@@ -1,7 +1,3 @@
-<body></body>
-<script>
-
-
 // 存储副作用函数的桶
 const bucket = new WeakMap()
 
@@ -37,7 +33,6 @@ const obj = new Proxy(data, {
   }
 })
 
-
 // 用一个全局变量存储当前激活的 effect 函数
 let activeEffect
 function effect(fn) {
@@ -55,5 +50,3 @@ effect(() => {
 setTimeout(() => {
   obj.text = 'hello vue3'
 }, 1000)
-
-</script>

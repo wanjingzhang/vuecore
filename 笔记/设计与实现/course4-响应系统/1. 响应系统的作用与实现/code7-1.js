@@ -1,6 +1,3 @@
-<body></body>
-<script>
-
 const set = new Set([1])
 
 const newSet = new Set(set)
@@ -9,7 +6,3 @@ newSet.forEach(item => {
   set.add(1)
   console.log(999)
 })
-
-
-
-</script>

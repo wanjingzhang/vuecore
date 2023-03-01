@@ -1,7 +1,3 @@
-<body></body>
-<script>
-
-
 // 存储副作用函数的桶
 const bucket = new WeakMap()
 
@@ -125,6 +121,3 @@ effect(() => {
 obj.foo++
 obj.foo++
 
-
-
-</script>

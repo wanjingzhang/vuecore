@@ -1,7 +1,3 @@
-<body></body>
-<script>
-
-
 // 存储副作用函数的桶
 const bucket = new WeakMap()
 
@@ -45,11 +41,12 @@ function trigger(target, key) {
   const effects = depsMap.get(key)
 
   const effectsToRun = new Set()
-  effects && effects.forEach(effectFn => {
-    if (effectFn !== activeEffect) {
-      effectsToRun.add(effectFn)
-    }
-  })
+  effects &&
+    effects.forEach(effectFn => {
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
   effectsToRun.forEach(effectFn => {
     if (effectFn.options.scheduler) {
       effectFn.options.scheduler(effectFn)
@@ -98,9 +95,6 @@ function cleanup(effectFn) {
   }
   effectFn.deps.length = 0
 }
-
-
-
 
 // =========================
 
@@ -153,7 +147,7 @@ function watch(source, cb, options = {}) {
       }
     }
   )
-  
+
   if (options.immediate) {
     job()
   } else {
@@ -166,36 +160,34 @@ function fetch() {
   count++
   const res = count === 1 ? 'A' : 'B'
   return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(res)
-    }, count === 1 ? 1000 : 100);
+    setTimeout(
+      () => {
+        resolve(res)
+      },
+      count === 1 ? 1000 : 100
+    )
   })
 }
 
 let finallyData
 
-watch(() => obj.foo, async (newVal, oldVal, onInvalidate) => {
-  let valid = true
-  onInvalidate(() => {
-    valid = false
-  })
-  const res = await fetch()
+watch(
+  () => obj.foo,
+  async (newVal, oldVal, onInvalidate) => {
+    let valid = true
+    onInvalidate(() => {
+      valid = false
+    })
+    const res = await fetch()
 
-  if (!valid) return
+    if (!valid) return
 
-  finallyData = res
-  console.log(finallyData)
-})
+    finallyData = res
+    console.log(finallyData)
+  }
+)
 
 obj.foo++
 setTimeout(() => {
   obj.foo++
-}, 200);
-
-
-
-
-
-
-
-</script>
+}, 200)
