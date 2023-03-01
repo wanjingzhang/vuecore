@@ -10,7 +10,7 @@ const obj = new Proxy(data, {
     // 将副作用函数 activeEffect 添加到存储副作用函数的桶中
     let depsMap = bucket.get(target)
     if (!depsMap) {
-      bucket.set(target, (depsMap = new Map()))
+      bucket.set(target, (depsMap = new Map())) // 设置bucket桶
     }
     let deps = depsMap.get(key)
     if (!deps) {
@@ -25,7 +25,7 @@ const obj = new Proxy(data, {
   set(target, key, newVal) {
     // 设置属性值
     target[key] = newVal
-    // 把副作用函数从桶里取出并执行
+    // 把副作用函数从桶里取出并执行， 执行bucket桶
     const depsMap = bucket.get(target)
     if (!depsMap) return
     const effects = depsMap.get(key)

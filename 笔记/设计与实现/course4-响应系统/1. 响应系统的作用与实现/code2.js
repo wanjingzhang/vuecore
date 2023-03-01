@@ -29,7 +29,7 @@ function effect() {
 }
 
 console.log(obj.text)
-
+// set 触发effect方法，effect内部获取时触发了 get。effect 获取了最新的text，更新body的视图
 obj.text = 'abc'
 
 obj.text = 'efg'

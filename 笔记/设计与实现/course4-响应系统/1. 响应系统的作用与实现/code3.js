@@ -30,6 +30,7 @@ function effect(fn) {
   fn()
 }
 
+// set副作用，get时执行
 effect(() => {
   console.log('effect run')
   document.body.innerText = obj.text
