@@ -36,6 +36,7 @@ effect(() => {
   document.body.innerText = obj.text
 })
 
+// 火火火 对不存在的属性，不该监听 却存在监听。
 setTimeout(() => {
   obj.text2 = 'hello vue3'
 }, 1000)
