@@ -1,29 +1,27 @@
-let obj1 = {}
-let obj2 = {}
-
-const map1 = new WeakMap()
-map1.set(obj1, 1)
-
-const map2 = new Map()
-map2.set(obj2, 2)
-
-obj1 = null
-obj2 = null
-
-console.log(map1.get(obj1)) // undefined
-console.log(map2.get(obj2)) // undefined
-
 // 为什么要用WeakMap
 // 他的key是弱引用，当key引用的对象存在时才会有意义，如果key不存在了，那么他可以被垃圾回收站回收
 
-const map = new Map()
-const weakmap = new WeakMap()
-;(function () {
-  const foo = { foo: 1 }
-  const bar = { bar: 2 }
-  map.set(foo, 1)
-  weakmap.set(bar, 2)
-})()
+// 强引用
+let foo = { foo: 1 }
+let arr = [foo, 'other']
+foo = null
+arr[0] = null
+console.log(arr)
 
-console.log(map.get({ foo: 1 }))
-console.log(weakmap.get({ bar: 2 }))
+// 弱引用
+let a = { name: 'celine', age: 18 }
+let weakmap = new WeakMap()
+weakmap.set(a, new Array(10 * 1024 * 1024))
+console.log(weakmap)
+a = null
+console.log(weakmap)
+
+// chrome => element => performance monitor => js heap size
+const buttonNode = document.querySelector('button')
+let key = { name: 'celine', age: 20 }
+let map = new WeakMap()
+map.set(key, new Array(10 * 1024 * 1024))
+buttonNode.addEventListener('click', () => {
+  key = null
+  console.log(map)
+})
