@@ -131,6 +131,7 @@ function watch(source, cb, options = {}) {
   }
   // 保存旧值和新值
   let oldValue, newValue
+  // 提取scheduler调度函数为一个独立的job函数
   const job = () => {
     // 重新执行后获取的是新值
     newValue = effectFn()
@@ -148,10 +149,13 @@ function watch(source, cb, options = {}) {
       lazy: true,
       scheduler: () => {
         // 当数据发生变化触发回调
+        // 在函数调度中判断flush是否为post，如果是，将其放到微任务队列中执行，从而实现异步延迟执行
         if (options.flush === 'post') {
           const p = Promise.resolve()
+          // 使用job函数作为调度器函数
           p.then(job)
         } else {
+          // 如果是sync同步执行可以立即执行
           job()
         }
       }
@@ -159,6 +163,7 @@ function watch(source, cb, options = {}) {
   )
 
   if (options.immediate) {
+    // 当immediate为true时立即执行job，从而执行触发回调执行
     job()
   } else {
     // 手动调用副作用函数，拿到的就是旧值
@@ -173,8 +178,10 @@ watch(
     console.log(newVal, oldVal)
   },
   {
+    // 回调函数在watch创建时立即执行
     immediate: true,
-    flush: 'post'
+    // 回调函数会在watch创建时立即执行一次
+    flush: 'post' // 还可以指定为'post'|'sync'
   }
 )
 

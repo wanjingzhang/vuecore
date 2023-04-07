@@ -118,16 +118,21 @@ function watch(source, cb, options = {}) {
 
   let oldValue, newValue
 
+  // 用来存储用户注册的过期回调
   let cleanup
+  // 定义过期回调
   function onInvalidate(fn) {
+    // 将过期回调存储在cleanup中
     cleanup = fn
   }
 
   const job = () => {
     newValue = effectFn()
+    // 在调用回调函数cb之前，先调用过期的回调
     if (cleanup) {
       cleanup()
     }
+    // 将 onInvalidate 作为回调函数的第三个参数，以便用户调用
     cb(oldValue, newValue, onInvalidate)
     oldValue = newValue
   }
@@ -174,12 +179,16 @@ let finallyData
 watch(
   () => obj.foo,
   async (newVal, oldVal, onInvalidate) => {
+    // 定义一个标志，代表当前副作用函数是否过期，默认为true，代表没有过期
     let valid = true
     onInvalidate(() => {
+      // 当过期时，将valid设置为false
       valid = false
     })
+    // 发送网络请求
     const res = await fetch()
 
+    // 只有当副作用函数的执行没有过期，才会执行后续操作。
     if (!valid) return
 
     finallyData = res
@@ -187,7 +196,9 @@ watch(
   }
 )
 
+// 第一次修改
 obj.foo++
 setTimeout(() => {
+  // 200ms后做第二次修改
   obj.foo++
 }, 200)
