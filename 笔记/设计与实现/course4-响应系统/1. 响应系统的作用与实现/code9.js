@@ -40,11 +40,14 @@ function trigger(target, key) {
   const effects = depsMap.get(key)
 
   const effectsToRun = new Set()
-  effects && effects.forEach(effectFn => {
-    if (effectFn !== activeEffect) {
-      effectsToRun.add(effectFn)
-    }
-  })
+  // 路由守卫 避免無限循環
+  effects &&
+    effects.forEach(effectFn => {
+      // Uncaught RangeError: Maximum call stack size exceeded
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
   effectsToRun.forEach(effectFn => effectFn())
   // effects && effects.forEach(effectFn => effectFn())
 }
@@ -79,9 +82,6 @@ function cleanup(effectFn) {
   }
   effectFn.deps.length = 0
 }
-
-
-
 
 // =========================
 

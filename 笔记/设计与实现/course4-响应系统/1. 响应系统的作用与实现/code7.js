@@ -39,6 +39,7 @@ function trigger(target, key) {
   if (!depsMap) return
   const effects = depsMap.get(key)
 
+  // 使用新的set访问旧set，防止无限循环
   const effectsToRun = new Set()
   effects && effects.forEach(effectFn => effectsToRun.add(effectFn))
   effectsToRun.forEach(effectFn => effectFn())
@@ -70,6 +71,7 @@ function cleanup(effectFn) {
 
 effect(() => {
   console.log('effect run')
+  // 切换分支根据obj.ok的值, 导致代码分支结果的变化
   document.body.innerText = obj.ok ? obj.text : 'not'
 })
 

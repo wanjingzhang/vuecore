@@ -41,11 +41,12 @@ function trigger(target, key) {
   const effects = depsMap.get(key)
 
   const effectsToRun = new Set()
-  effects && effects.forEach(effectFn => {
-    if (effectFn !== activeEffect) {
-      effectsToRun.add(effectFn)
-    }
-  })
+  effects &&
+    effects.forEach(effectFn => {
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
   effectsToRun.forEach(effectFn => {
     if (effectFn.options.scheduler) {
       effectFn.options.scheduler(effectFn)
@@ -89,18 +90,17 @@ function cleanup(effectFn) {
   effectFn.deps.length = 0
 }
 
-
-
-
 // =========================
-
+// 調度器
 const jobQueue = new Set()
 const p = Promise.resolve()
 
 let isFlushing = false
 function flushJob() {
+  console.log('isFlushing=', isFlushing)
   if (isFlushing) return
   isFlushing = true
+  // 執行微任務
   p.then(() => {
     jobQueue.forEach(job => job())
   }).finally(() => {
@@ -108,16 +108,19 @@ function flushJob() {
   })
 }
 
-
-effect(() => {
-  console.log(obj.foo)
-}, {
-  scheduler(fn) {
-    jobQueue.add(fn)
-    flushJob()
+effect(
+  () => {
+    console.log(obj.foo)
+  },
+  // options
+  {
+    // 調度器scheduler是一個函數
+    scheduler(fn) {
+      jobQueue.add(fn)
+      flushJob()
+    }
   }
-})
+)
 
 obj.foo++
 obj.foo++
-

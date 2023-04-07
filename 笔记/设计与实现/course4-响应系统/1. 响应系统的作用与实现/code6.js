@@ -36,6 +36,7 @@ function track(target, key) {
 function trigger(target, key) {
   const depsMap = bucket.get(target)
   if (!depsMap) return
+  // 无限循环，新增和删除在foreach中执行时，遍历并未结束，那么它会被重新访问
   const effects = depsMap.get(key)
   effects && effects.forEach(fn => fn())
 }

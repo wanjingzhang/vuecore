@@ -1,3 +1,4 @@
+// watch 屬性：本質利用effect和options.schedule選項
 // 存储副作用函数的桶
 const bucket = new WeakMap()
 
@@ -41,11 +42,12 @@ function trigger(target, key) {
   const effects = depsMap.get(key)
 
   const effectsToRun = new Set()
-  effects && effects.forEach(effectFn => {
-    if (effectFn !== activeEffect) {
-      effectsToRun.add(effectFn)
-    }
-  })
+  effects &&
+    effects.forEach(effectFn => {
+      if (effectFn !== activeEffect) {
+        effectsToRun.add(effectFn)
+      }
+    })
   effectsToRun.forEach(effectFn => {
     if (effectFn.options.scheduler) {
       effectFn.options.scheduler(effectFn)
@@ -95,14 +97,15 @@ function cleanup(effectFn) {
   effectFn.deps.length = 0
 }
 
-
-
-
 // =========================
 
 function traverse(value, seen = new Set()) {
+  // 如果要读取的数据是原始值，或者已经被读取过了，那么什么都不做
   if (typeof value !== 'object' || value === null || seen.has(value)) return
+  // 将数据添加到seen中，代表遍历读取过了，避免循环引用引起的死循环
   seen.add(value)
+  // 暂时不考虑数组和其他结构
+  // 假设value是一个对象，使用for...in 读取对象的每个值，并递归调用traverse进行处理
   for (const k in value) {
     traverse(value[k], seen)
   }
@@ -110,28 +113,41 @@ function traverse(value, seen = new Set()) {
   return value
 }
 
+/**
+ *
+ * @param {*} source 是响应式数据
+ * @param {*} cb 是回调函数
+ * @param {*} options
+ */
 function watch(source, cb, options = {}) {
   let getter
+  // 如果watch的第一个参数不再是响应式数据，而是一个getter函数。在getter内部用户可以指定watch依赖哪些响应数据。只有当这些数据发生变化时才会触发回调的执行。
   if (typeof source === 'function') {
+    // 如果source时函数，说明用户传递的时getter，所以直接把source赋值给getter
     getter = source
   } else {
+    // 否则按照原来的实现 调用traverse递归读取
     getter = () => traverse(source)
   }
-
+  // 保存旧值和新值
   let oldValue, newValue
-
   const job = () => {
+    // 重新执行后获取的是新值
     newValue = effectFn()
+    // 将旧值和新值作为回调函数的参数
     cb(oldValue, newValue)
+    // 更新旧值，不然下次会获取错误的旧值
     oldValue = newValue
   }
 
+  // ✨使用effect函数调用时开启lazy选项，并把返回值存储在effectFn中以便日后手动调用
   const effectFn = effect(
-    // 执行 getter
+    // 触发读取操作，从而建立联系
     () => getter(),
     {
       lazy: true,
       scheduler: () => {
+        // 当数据发生变化触发回调
         if (options.flush === 'post') {
           const p = Promise.resolve()
           p.then(job)
@@ -141,20 +157,26 @@ function watch(source, cb, options = {}) {
       }
     }
   )
-  
+
   if (options.immediate) {
     job()
   } else {
+    // 手动调用副作用函数，拿到的就是旧值
     oldValue = effectFn()
   }
 }
 
-watch(() => obj.foo, (newVal, oldVal) => {
-  console.log(newVal, oldVal)
-}, {
-  immediate: true,
-  flush: 'post'
-})
+watch(
+  () => obj.foo,
+  (newVal, oldVal) => {
+    // 数据变化了
+    console.log(newVal, oldVal)
+  },
+  {
+    immediate: true,
+    flush: 'post'
+  }
+)
 
 setTimeout(() => {
   obj.foo++

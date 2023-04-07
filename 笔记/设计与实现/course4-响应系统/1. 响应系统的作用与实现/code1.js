@@ -6,4 +6,4 @@ function effect() {
   document.body.appendChild(div)
 }
 
-effect()
+document.getElementById('button').addEventListener('click', effect)
