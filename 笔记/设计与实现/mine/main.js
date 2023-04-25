@@ -1,7 +1,7 @@
 // 渲染obj的渲染器
 // 渲染函数，传入对象，渲染出数据
 function mountComponent(vnode, container) {
-  let subtree = vnode.tag()
+  let subtree = vnode.tag.render()
   Render(subtree, container)
 }
 
@@ -29,27 +29,28 @@ function Render(vnode, container) {
   // 判断它是组件还是普通元素
   if (typeof vnode.tag == 'string') {
     mountElement(vnode, container)
-  } else if (typeof vnode.tag == 'function') {
+  } else if (typeof vnode.tag == 'object') {
     mountComponent(vnode, container)
   }
 }
 
-function MyComponent() {
-  let obj = {
-    tag: 'div',
-    children: [
-      {
-        tag: 'span',
-        children: 'hello world',
-        props: {
-          onClick: () => {
-            alert('hello')
+const MyComponent = {
+  render() {
+    return {
+      tag: 'div',
+      children: [
+        {
+          tag: 'span',
+          children: 'hello world',
+          props: {
+            onClick: () => {
+              alert('hello')
+            }
           }
         }
-      }
-    ]
+      ]
+    }
   }
-  return obj
 }
 
 const vnode = {
