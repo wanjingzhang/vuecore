@@ -57,4 +57,5 @@ const vnode = {
   tag: MyComponent
 }
 
+// 组件的渲染器
 Render(vnode, document.body)
