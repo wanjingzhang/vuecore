@@ -1,5 +1,5 @@
 /**
- * 添加事件的渲染器
+ * 1. 添加事件的渲染器
  * @param {*} vnode 虚拟DOM
  * @param {*} container DOM容器
  */

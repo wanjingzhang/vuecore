@@ -1,5 +1,5 @@
 /**
- * 递归调用 renderer 渲染 subtree
+ * 1. 递归调用 renderer 渲染 subtree
  * @param {虚拟DOM} vnode
  * @param {容器} container
  */
@@ -14,7 +14,7 @@ function renderer(vnode, container) {
 }
 
 /**
- * 渲染元素
+ * 2. 渲染元素
  * @param {虚拟DOM} vnode
  * @param {容器} container
  */
@@ -46,7 +46,7 @@ function mountElement(vnode, container) {
 }
 
 /**
- * 渲染组件
+ * 3. 渲染组件
  * @param {虚拟DOM} vnode
  * @param {容器} container
  */
